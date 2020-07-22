@@ -6,7 +6,9 @@ import com.fayaman.demojenkins.service.ContactsManagementService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -18,17 +20,17 @@ public class ContactsManagementController {
 	public static final Logger LOGGER=LoggerFactory.getLogger("log");
 
 	@PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-	public String processAddContactSubmit(@RequestBody CustomerContact aContact) {
+	public ResponseEntity<?> processAddContactSubmit(@RequestBody CustomerContact aContact) {
 		
 
 		CustomerContact newContact = contactsManagementService.add(aContact);
 		
 		if (newContact != null) {
 			LOGGER.info("not supported ",aContact);
-			return "success";
+			return new ResponseEntity<CustomerContact>(aContact,HttpStatus.OK);
 		}
 
-		return "redirect:/failure";
+		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 	}
 	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 	public CustomerContact getContact( ) {
